@@ -241,9 +241,17 @@ export default function DelCaribePage() {
         <section id="universo" className="py-24 scroll-mt-24">
           <SectionLabel index="01 —">Universo</SectionLabel>
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.9, ease: EASE }} className="rounded-2xl border border-surface-border bg-surface/30 p-4 sm:p-6 backdrop-blur-sm">
-            <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-60px" }} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-              {interests.map((it) => <InterestCard key={it.title} it={it} />)}
-            </motion.div>
+          <motion.div variants={stagger}>
+  {interests.map((it) => (
+    it.tag === "FOTOS" ? (
+      <a key={it.title} href="/fotografia">
+        <InterestCard it={it} />
+      </a>
+    ) : (
+      <InterestCard key={it.title} it={it} />
+    )
+  ))}
+</motion.div>
           </motion.div>
 </section>
         <section id="sobre" className="py-24 scroll-mt-24">
