@@ -203,7 +203,7 @@ export default function DelCaribePage() {
             </h1>
 
             <motion.p variants={fadeUp} className="mt-12 max-w-md text-[14.5px] leading-[1.85] text-muted-foreground">
-              Coleccionista de mundos. <span className="text-foreground font-medium">Música, anime, literatura, terror, código.</span> Encuentro patrones donde los demás ven caos — ya sea en la historia, en una pista, o en un bug de las 2am.
+              Coleccionista de mundos. <span className="text-foreground font-medium">Música, anime, literatura, terror, códigos.</span> Encuentro patrones donde los demás ven caos — ya sea en la historia, en una pista, o en un bug de las 2am.
             </motion.p>
 
             <motion.div variants={fadeUp} className="mt-12 flex flex-wrap gap-3">
@@ -242,7 +242,7 @@ export default function DelCaribePage() {
           <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.9, ease: EASE }} className="rounded-2xl border border-surface-border bg-surface/30 p-7 sm:p-10">
             <div className="text-[11px] tracking-[0.32em] text-muted-foreground uppercase mb-6">Quién soy</div>
             <p className="text-[16px] leading-[1.9] text-muted-foreground max-w-3xl">
-              Soy <span className="text-foreground font-medium">DelCaribe</span> — alguien que vive entre géneros, épocas y formatos. No colecciono cosas al azar: cada interés tiene un hilo conector. El terror psicológico y la historia comparten la misma pregunta: <span className="text-foreground">¿por qué los humanos hacemos lo que hacemos?</span> Los autos a escala y el anime tienen la misma respuesta: el detalle importa.
+              Soy <span className="text-foreground font-medium">DelCaribe</span> — alguien que vive entre épocas y formatos. No colecciono cosas al azar: cada interés tiene un hilo conector. El terror psicológico y la historia comparten la misma pregunta: <span className="text-foreground">¿por qué los humanos hacemos lo que hacemos?</span> Los autos a escala y el anime tienen la misma respuesta: el detalle importa.
             </p>
           </motion.div>
 
@@ -290,7 +290,7 @@ export default function DelCaribePage() {
       <footer className="border-t border-surface-border mt-8 relative z-[2]">
         <div className="max-w-5xl mx-auto px-6 sm:px-8 py-7 flex flex-wrap justify-between gap-3 text-[12px] text-muted-foreground">
           <div>© 2026 <span className="text-foreground">DelCaribe</span>. Todos los derechos reservados.</div>
-          <div className="tracking-wider">Construido con intención.</div>
+          <div className="tracking-wider">Construido con intención BITCH.</div>
         </div>
       </footer>
     </div>
