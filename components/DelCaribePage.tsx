@@ -15,7 +15,7 @@ const interests = [
   { icon: "🎵", tag: "SONIDO", title: "Música", desc: "Distintos géneros, un solo idioma." },
   { icon: "⛩️", tag: "CULTURA", title: "Anime", desc: "Arte, narrativa y filosofía en movimiento." },
   { icon: "📖", tag: "LETRAS", title: "Literatura", desc: "Corrientes artísticas, no solo páginas." },
-  { icon: "🏛️", tag: "TIEMPO", title: "Historia", desc: "Entender el presente leyendo el pasado." },
+  { icon: "📷", tag: "FOTOS", title: "Fotografía", desc: "Entender el presente leyendo el pasado a través de la imagen." },
   { icon: "🏍️", tag: "VELOCIDAD", title: "Motos", desc: "Libertad sobre dos ruedas." },
   { icon: "🎮", tag: "MUNDOS", title: "Videojuegos", desc: "Narrativa interactiva llevada al límite." },
   { icon: "👁️", tag: "PSIQUE", title: "Terror", desc: "Horror psicológico y misterios de la red." },
