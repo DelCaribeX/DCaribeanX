@@ -118,6 +118,13 @@ function InterestCard({ it }: { it: (typeof interests)[number] }) {
         style={{ background: "radial-gradient(260px circle at var(--mx,50%) var(--my,0%), color-mix(in oklab, var(--gold) 14%, transparent), transparent 60%)" }}
       />
       <div className="relative">
+        {it.tag === "FOTOS" && (
+  <div className="grid grid-cols-3 gap-2 mb-4">
+    <img src="/fotos/ChatGPT Image 13 jun 2026, 15_02_15.png" alt="" className="rounded-lg h-20 w-full object-cover" />
+    <img src="/fotos/WhatsApp Image 2026-06-13 at 2.54.35 PM.jpeg" alt="" className="rounded-lg h-20 w-full object-cover" />
+    <img src="/fotos/WhatsApp Image 2026-06-13 at 2.54.49 PM.jpeg" alt="" className="rounded-lg h-20 w-full object-cover" />
+  </div>
+)}
         <motion.div className="text-2xl mb-5" whileHover={{ scale: 1.18, rotate: -6 }} transition={{ type: "spring", stiffness: 280, damping: 16 }}>
           {it.icon}
         </motion.div>
