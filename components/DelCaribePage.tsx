@@ -245,55 +245,6 @@ export default function DelCaribePage() {
               {interests.map((it) => <InterestCard key={it.title} it={it} />)}
             </motion.div>
           </motion.div>
-        </section>
-<section id="fotografia" className="py-24">
-  <SectionLabel index="01">Galería Fotográfica</SectionLabel>
-
-  <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-    <img
-      src="/fotos/foto1.png"
-      alt=""
-      className="w-full rounded-2xl object-cover hover:scale-105 transition duration-300"
-    />
-
-    <img
-      src="/fotos/foto2.jpeg"
-      alt=""
-      className="w-full rounded-2xl object-cover hover:scale-105 transition duration-300"
-    />
-
-    <img
-      src="/fotos/foto3.jpeg"
-      alt=""
-      className="w-full rounded-2xl object-cover hover:scale-105 transition duration-300"
-    />
-
-    <img
-      src="/fotos/foto4.jpeg"
-      alt=""
-      className="w-full rounded-2xl object-cover hover:scale-105 transition duration-300"
-    />
-
-    <img
-      src="/fotos/foto5.jpeg"
-      alt=""
-      className="w-full rounded-2xl object-cover hover:scale-105 transition duration-300"
-    />
-
-    <img
-      src="/fotos/foto6.jpeg"
-      alt=""
-      className="w-full rounded-2xl object-cover hover:scale-105 transition duration-300"
-    />
-
-    <img
-      src="/fotos/foto7.jpeg"
-      alt=""
-      className="w-full rounded-2xl object-cover hover:scale-105 transition duration-300"
-    />
-
-  </div>
 </section>
         <section id="sobre" className="py-24 scroll-mt-24">
           <SectionLabel index="02 —">Sobre mí</SectionLabel>
