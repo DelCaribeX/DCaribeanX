@@ -203,7 +203,7 @@ export default function DelCaribePage() {
             </h1>
 
             <motion.p variants={fadeUp} className="mt-12 max-w-md text-[14.5px] leading-[1.85] text-muted-foreground">
-              Coleccionista de mundos. <span className="text-foreground font-medium">Música, anime, literatura, terror, códigos.</span> Encuentro patrones donde los demás ven caos — ya sea en la historia, en una pista, o en un bug de las 2am.
+              Coleccionista de mundos. <span className="text-foreground font-medium">Música, anime, literatura, terror, códigos.</span> Encuentro patrones donde los demás ven caos — ya sea en la historia, en una pista, o en un bug de las 3am.
             </motion.p>
 
             <motion.div variants={fadeUp} className="mt-12 flex flex-wrap gap-3">
