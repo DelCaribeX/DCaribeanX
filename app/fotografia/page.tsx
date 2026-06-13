@@ -1,30 +1,29 @@
-export default function FotografiaPage() {
-  const fotos = [
-    "/fotos/foto1.png",
-    "/fotos/foto2.jpeg",
-    "/fotos/foto3.jpeg",
-    "/fotos/foto4.jpeg",
-    "/fotos/foto5.jpeg",
-    "/fotos/foto6.jpeg",
-    "/fotos/foto7.jpeg",
-  ];
-
+export default function Fotografia() {
   return (
-    <main className="min-h-screen bg-black text-white p-10">
-      <h1 className="text-4xl font-bold mb-10">
-        Galería Fotográfica
-      </h1>
+    <main className="min-h-screen bg-black text-white px-10 py-20">
+<a href="/" className="inline-block mb-10 text-zinc-400 hover:text-white transition">
+  ← Volver al portafolio
+</a>
+      <div className="text-center mb-16">
+        <h1 className="text-6xl font-bold">
+          Galería Fotográfica
+        </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {fotos.map((foto) => (
-          <img
-            key={foto}
-            src={foto}
-            alt=""
-            className="w-full rounded-xl"
-          />
-        ))}
+        <p className="mt-4 text-zinc-400">
+          Entender el presente leyendo el pasado a través de la imagen.
+        </p>
       </div>
+
+      <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+        <img src="/fotos/foto1.png" className="w-full rounded-xl" />
+        <img src="/fotos/foto2.jpeg" className="w-full rounded-xl" />
+        <img src="/fotos/foto3.jpeg" className="w-full rounded-xl" />
+        <img src="/fotos/foto4.jpeg" className="w-full rounded-xl" />
+        <img src="/fotos/foto5.jpeg" className="w-full rounded-xl" />
+        <img src="/fotos/foto6.jpeg" className="w-full rounded-xl" />
+        <img src="/fotos/foto7.jpeg" className="w-full rounded-xl" />
+      </div>
+
     </main>
-  );
+  )
 }
