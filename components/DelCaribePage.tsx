@@ -232,15 +232,17 @@ export default function DelCaribePage() {
           <SectionLabel index="01 —">Universo</SectionLabel>
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.9, ease: EASE }} className="rounded-2xl border border-surface-border bg-surface/30 p-4 sm:p-6 backdrop-blur-sm">
           <motion.div variants={stagger}>
-  {interests.map((it) => (
-    it.tag === "FOTOS" ? (
-      <a key={it.title} href="/fotografia">
+ {interests.map((it) => (
+  <div key={it.title}>
+    {it.tag === "FOTOS" ? (
+      <a href="/fotografia">
         <InterestCard it={it} />
       </a>
     ) : (
-      <InterestCard key={it.title} it={it} />
-    )
-  ))}
+      <InterestCard it={it} />
+    )}
+  </div>
+))}
 </motion.div>
           </motion.div>
 </section>
