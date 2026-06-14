@@ -22,7 +22,6 @@ const interests = [
   { icon: "🚗", tag: "COLECCIÓN", title: "Autos 1:64", desc: "Diseño en miniatura, precisión a escala." },
   { icon: "💻", tag: "BUILD", title: "Programación", desc: "Aprendiendo a construir con código." },
   { icon: "🖋️", tag: "ARTE", title: "Tattoos", desc: "La piel como lienzo permanente." },
-  {icon: "🌹", tag: "CÓDIGO", title: "Rosa Python",desc: "Arte generativo con Python y Canvas"},
 ];
 
 const skills = ["HTML / CSS", "JavaScript", "Git", "Curiosidad"];
