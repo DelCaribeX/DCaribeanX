@@ -1,2 +1,2 @@
-import DelCaribePage from "@/components/DelCaribePage";
+import RosaPython from "../../components/RosaPython";
 export default function Page() { return <DelCaribePage />; }
