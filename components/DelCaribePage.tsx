@@ -242,6 +242,10 @@ export default function DelCaribePage() {
       <a href="/fotografia">
         <InterestCard it={it} />
       </a>
+    ) : it.title === "Rosa Python" ? (
+      <a href="/rosa">
+        <InterestCard it={it} />
+      </a>
     ) : (
       <InterestCard it={it} />
     )}
