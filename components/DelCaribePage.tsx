@@ -305,8 +305,8 @@ export default function DelCaribePage() {
 
       <footer className="border-t border-surface-border">
         <div className="mx-auto flex max-w-5xl flex-wrap justify-between gap-3 px-6 py-7 text-[11px] text-muted-foreground sm:px-8">
-          <span>© 2026 <b className="text-foreground">DelCaribe</b></span>
-          <span className="uppercase tracking-[0.16em]">Built with curiosity, code & caffeine.</span>
+          <span>© 2026 <b className="text-foreground">DelCaribe.</b> Todos los derechos reservados.</span>
+          <span>Construido con intención BITCH.</span>
         </div>
       </footer>
 
