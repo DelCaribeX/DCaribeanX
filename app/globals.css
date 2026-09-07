@@ -111,6 +111,18 @@ button { font: inherit; }
   100% { box-shadow: 0 0 0 0 rgba(201,161,74,0); }
 }
 
+.dc-eq-bar {
+  transform-origin: bottom;
+  animation: dc-eq .75s ease-in-out infinite alternate;
+}
+.dc-eq-bar-delay { animation-delay: -.35s; }
+.dc-eq-bar-delay-2 { animation-delay: -.55s; }
+
+@keyframes dc-eq {
+  from { transform: scaleY(.35); opacity: .55; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
