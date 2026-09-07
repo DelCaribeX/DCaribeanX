@@ -1,307 +1,169 @@
 "use client";
 
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useReducedMotion,
-  useSpring,
-  AnimatePresence,
-  type Variants,
-} from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
+import { useEffect, useState } from "react";
 
-const interests = [
-  { icon: "🎵", tag: "SONIDO", title: "Música", desc: "Distintos géneros, un solo idioma." },
-  { icon: "⛩️", tag: "CULTURA", title: "Anime", desc: "Arte, narrativa y filosofía en movimiento." },
-  { icon: "📖", tag: "LETRAS", title: "Literatura", desc: "Corrientes artísticas, no solo páginas." },
-  { icon: "📷", tag: "FOTOS", title: "Fotografía", desc: "Entender el presente leyendo el pasado a través de la imagen." },
-  { icon: "🏍️", tag: "VELOCIDAD", title: "Motos", desc: "Libertad sobre dos ruedas." },
-  { icon: "🎮", tag: "MUNDOS", title: "Videojuegos", desc: "Narrativa interactiva llevada al límite." },
-  { icon: "👁️", tag: "PSIQUE", title: "Terror", desc: "Horror psicológico y misterios de la red." },
-  { icon: "🚗", tag: "COLECCIÓN", title: "Autos 1:64", desc: "Diseño en miniatura, precisión a escala." },
-  { icon: "💻", tag: "BUILD", title: "Programación", desc: "Aprendiendo a construir con código." },
-  { icon: "🖋️", tag: "ARTE", title: "Tattoos", desc: "La piel como lienzo permanente." },
+type Interest = {
+  index: string;
+  tag: string;
+  title: string;
+  desc: string;
+  body: string;
+  keywords: string[];
+  href?: string;
+};
+
+const interests: Interest[] = [
+  { index: "01", tag: "SONIDO", title: "Música", desc: "Géneros, texturas y estados de ánimo.", body: "La música es arquitectura invisible: ritmo, capas y silencios capaces de cambiar por completo la lectura de un momento.", keywords: ["electrónica", "atmósfera", "ritmo"] },
+  { index: "02", tag: "CULTURA", title: "Anime", desc: "Arte, narrativa y filosofía en movimiento.", body: "Me interesa cuando la animación deja de ser solo estética y se convierte en una forma distinta de hablar sobre identidad, conflicto y memoria.", keywords: ["dirección de arte", "narrativa", "Japón"] },
+  { index: "03", tag: "LETRAS", title: "Literatura", desc: "Ideas, corrientes y mundos escritos.", body: "Leer es entrar en sistemas de pensamiento ajenos. Busco textos que construyan mundos y también los que cuestionan cómo entendemos el nuestro.", keywords: ["ficción", "ensayo", "historia"] },
+  { index: "04", tag: "FOTOS", title: "Fotografía", desc: "Memoria, instante y lectura visual.", body: "Fotografiar es decidir qué merece permanecer. Me atraen el detalle, la textura y las escenas cotidianas que cambian cuando se observan con más tiempo.", keywords: ["archivo", "calle", "memoria"], href: "/fotografia" },
+  { index: "05", tag: "VELOCIDAD", title: "Motos", desc: "Diseño, mecánica y libertad.", body: "Las motos mezclan ingeniería, estética y experiencia física. Me interesan tanto por la máquina como por la cultura que se construye alrededor de ella.", keywords: ["mecánica", "diseño", "rutas"] },
+  { index: "06", tag: "MUNDOS", title: "Videojuegos", desc: "Narrativa interactiva y dirección de arte.", body: "Un videojuego no solo cuenta una historia: te obliga a habitarla. Me interesan los mundos donde diseño, música y mecánicas funcionan como un solo lenguaje.", keywords: ["worldbuilding", "gameplay", "inmersión"] },
+  { index: "07", tag: "PSIQUE", title: "Terror", desc: "Horror psicológico y misterios de la red.", body: "El terror funciona mejor cuando sugiere más de lo que muestra. Me atraen lo psicológico, lo extraño y los rincones de internet donde una historia puede sentirse demasiado real.", keywords: ["horror", "ARG", "misterio"] },
+  { index: "08", tag: "1:64", title: "Autos a escala", desc: "Diseño automotriz reducido al detalle.", body: "Coleccionar a escala es estudiar diseño industrial en miniatura: proporciones, líneas, épocas y pequeñas decisiones que hacen reconocible a un auto.", keywords: ["die-cast", "1:64", "colección"] },
+  { index: "09", tag: "BUILD", title: "Programación", desc: "Construir, romper y corregir.", body: "El código se volvió otra forma de entender cómo están construidas las cosas. Aprendo haciendo interfaces y convirtiendo ideas en algo que se pueda usar.", keywords: ["Next.js", "JavaScript", "UI"] },
+  { index: "10", tag: "ARTE", title: "Tattoos", desc: "Símbolos, composición y memoria.", body: "Me atrae el tatuaje como memoria visual: una mezcla de símbolo, composición e historia personal que existe sobre un soporte vivo.", keywords: ["símbolos", "composición", "blackwork"] },
 ];
 
-const skills = ["HTML / CSS", "JavaScript", "Git", "Curiosidad"];
-const EASE = [0.22, 1, 0.36, 1] as const;
+const projects = [
+  { n: "01", type: "FOTOGRAFÍA / ARCHIVO", title: "Archivo Fotográfico", desc: "Una selección visual de escenas, detalles y memoria dentro del universo DelCaribe.", href: "/fotografia", cta: "Abrir archivo" },
+  { n: "02", type: "WEB / IDENTIDAD", title: "DCaribeanX", desc: "Este portafolio como experimento continuo de identidad, interfaz y movimiento construido con Next.js.", href: "https://github.com/DelCaribeX/DCaribeanX", cta: "Ver código", external: true },
+];
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 28 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.9, ease: EASE } },
-};
-const stagger: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } },
-};
-const cardVariant: Variants = {
-  hidden: { opacity: 0, y: 22, filter: "blur(6px)" },
-  show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.7, ease: EASE } },
-};
+const nav = [["#universo", "Universo"], ["#proyectos", "Proyectos"], ["#sobre", "Sobre mí"], ["#contacto", "Contacto"]];
 
-function Loader({ done }: { done: boolean }) {
+function SectionLabel({ n, children }: { n: string; children: string }) {
   return (
-    <AnimatePresence>
-      {!done && (
-        <motion.div
-          key="loader"
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.6, ease: EASE } }}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-background"
-        >
-          <motion.div exit={{ y: -20, opacity: 0, transition: { duration: 0.6, ease: EASE } }} className="flex flex-col items-center gap-6">
-            <div className="font-serif text-3xl tracking-tight">Del<span className="text-gold">Caribe</span></div>
-            <div className="relative h-px w-40 overflow-hidden bg-surface-border">
-              <span className="absolute inset-y-0 left-0 w-1/3 bg-gold dc-loader-bar" />
-            </div>
-            <div className="text-[10px] tracking-[0.4em] text-muted-foreground uppercase">Cargando universo</div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
-
-function SectionLabel({ children, index }: { children: string; index?: string }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: -8 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.7, ease: EASE }}
-      className="flex items-center gap-4 mb-10"
-    >
-      {index && <span className="text-[10px] tabular-nums tracking-[0.3em] text-gold">{index}</span>}
-      <span className="text-[11px] tracking-[0.32em] text-muted-foreground uppercase">{children}</span>
-      <motion.span
-        initial={{ scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 1.2, ease: EASE, delay: 0.15 }}
-        style={{ transformOrigin: "left" }}
-        className="flex-1 h-px bg-gradient-to-r from-surface-border via-surface-border to-transparent"
-      />
-    </motion.div>
-  );
-}
-
-function InterestCard({ it }: { it: (typeof interests)[number] }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const reduce = useReducedMotion();
-  const onMove = (e: React.MouseEvent) => {
-    const el = ref.current; if (!el || reduce) return;
-    const r = el.getBoundingClientRect();
-    const x = e.clientX - r.left, y = e.clientY - r.top;
-    el.style.setProperty("--mx", `${x}px`);
-    el.style.setProperty("--my", `${y}px`);
-    el.style.setProperty("--rx", `${((y / r.height) - 0.5) * -4}deg`);
-    el.style.setProperty("--ry", `${((x / r.width) - 0.5) * 4}deg`);
-  };
-  const onLeave = () => {
-    const el = ref.current; if (!el) return;
-    el.style.setProperty("--rx", `0deg`); el.style.setProperty("--ry", `0deg`);
-  };
-  return (
-    <motion.div
-      ref={ref}
-      variants={cardVariant}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      whileHover={{ y: -5, transition: { duration: 0.35, ease: EASE } }}
-      style={{ transform: "perspective(700px) rotateX(var(--rx,0)) rotateY(var(--ry,0))", transformStyle: "preserve-3d" }}
-      className="group relative rounded-lg bg-surface border border-surface-border/60 p-5 overflow-hidden transition-[border-color,background,box-shadow] duration-500 hover:border-gold/50 hover:shadow-[0_24px_60px_-30px_color-mix(in_oklab,var(--gold)_50%,transparent)]"
-    >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{ background: "radial-gradient(260px circle at var(--mx,50%) var(--my,0%), color-mix(in oklab, var(--gold) 14%, transparent), transparent 60%)" }}
-      />
-      <div className="relative">
-        <motion.div className="text-2xl mb-5" whileHover={{ scale: 1.18, rotate: -6 }} transition={{ type: "spring", stiffness: 280, damping: 16 }}>
-          {it.icon}
-        </motion.div>
-        <div className="text-[10px] tracking-[0.32em] text-gold uppercase mb-2">{it.tag}</div>
-        <div className="text-[15px] font-semibold mb-1.5 tracking-tight">{it.title}</div>
-        <div className="text-[12px] text-muted-foreground leading-relaxed">{it.desc}</div>
-      </div>
-      <span className="pointer-events-none absolute bottom-0 left-5 right-5 h-px bg-gradient-to-r from-transparent via-gold/70 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left" />
-    </motion.div>
+    <div className="mb-10 flex items-center gap-4">
+      <span className="text-[10px] font-semibold tracking-[0.3em] text-gold">{n}</span>
+      <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">{children}</span>
+      <span className="h-px flex-1 bg-surface-border" />
+    </div>
   );
 }
 
 export default function DelCaribePage() {
-  const heroRef = useRef<HTMLElement>(null);
-  const reduce = useReducedMotion();
-  const [loaded, setLoaded] = useState(false);
+  const [selected, setSelected] = useState<Interest | null>(null);
+  const [menu, setMenu] = useState(false);
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 110, damping: 24, mass: 0.2 });
 
-  useEffect(() => { const t = setTimeout(() => setLoaded(true), 950); return () => clearTimeout(t); }, []);
-
-  const { scrollYProgress: heroProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const heroY = useTransform(heroProgress, [0, 1], [0, reduce ? 0 : 90]);
-  const heroOpacity = useTransform(heroProgress, [0, 1], [1, 0.25]);
-  const heroScale = useTransform(heroProgress, [0, 1], [1, reduce ? 1 : 0.96]);
-  const glowY = useTransform(heroProgress, [0, 1], [0, reduce ? 0 : -120]);
-
-  const { scrollYProgress: pageProgress } = useScroll();
-  const progress = useSpring(pageProgress, { stiffness: 120, damping: 24, mass: 0.3 });
+  useEffect(() => {
+    document.body.style.overflow = selected || menu ? "hidden" : "";
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") { setSelected(null); setMenu(false); }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", onKey); };
+  }, [selected, menu]);
 
   return (
-    <div className="dc-grain min-h-screen bg-background text-foreground font-sans antialiased relative">
-      <Loader done={loaded} />
+    <div className="dc-grain min-h-screen overflow-x-hidden bg-background font-sans text-foreground">
+      <motion.div style={{ scaleX: progress, transformOrigin: "left" }} className="fixed left-0 right-0 top-0 z-[100] h-[2px] bg-gold" />
 
-      <motion.div style={{ scaleX: progress, transformOrigin: "left" }} className="fixed top-0 left-0 right-0 h-[2px] z-[60] bg-gradient-to-r from-gold via-gold-soft to-gold" />
-
-      <motion.header
-        initial={{ opacity: 0, y: -14 }}
-        animate={loaded ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.8, ease: EASE, delay: 0.1 }}
-        className="sticky top-0 z-40 backdrop-blur-xl bg-background/65 border-b border-surface-border/40"
-      >
-        <div className="max-w-5xl mx-auto px-6 sm:px-8 py-4 flex items-center justify-between">
-          <a href="#top" className="text-[15px] font-semibold tracking-tight">Del<span className="text-gold">Caribe</span></a>
-          <nav className="flex items-center gap-6 sm:gap-8 text-[13px] text-muted-foreground">
-            {[
-              { href: "#universo", label: "Intereses" },
-              { href: "#sobre", label: "Sobre mí" },
-              { href: "#contacto", label: "Contacto" },
-            ].map((l) => (
-              <a key={l.href} href={l.href} className="relative hover:text-foreground transition-colors duration-300 after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-px after:w-full after:bg-gold after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">
-                {l.label}
-              </a>
-            ))}
+      <header className="sticky top-0 z-[80] border-b border-surface-border/70 bg-background/80 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
+          <a href="#top" className="relative z-[90] text-sm font-semibold">Del<span className="text-gold">Caribe</span></a>
+          <nav className="hidden gap-7 text-[12px] text-muted-foreground sm:flex">
+            {nav.map(([href, label]) => <a key={href} href={href} className="dc-nav-link">{label}</a>)}
           </nav>
+          <button onClick={() => setMenu(!menu)} className="relative z-[90] rounded-full border border-surface-border px-3 py-2 text-[9px] uppercase tracking-[0.2em] text-muted-foreground sm:hidden" aria-expanded={menu}>{menu ? "Cerrar" : "Menú"}</button>
         </div>
-      </motion.header>
+      </header>
 
-      <main id="top" className="max-w-5xl mx-auto px-6 sm:px-8 relative z-[2]">
-        <motion.section ref={heroRef} style={{ y: heroY, opacity: heroOpacity, scale: heroScale }} className="pt-24 pb-28 relative">
-          <motion.div variants={stagger} initial="hidden" animate={loaded ? "show" : "hidden"} className="relative">
-            <motion.div variants={fadeUp} className="flex items-center gap-3 mb-12">
-              <motion.span initial={{ scaleX: 0 }} animate={loaded ? { scaleX: 1 } : {}} transition={{ duration: 1, ease: EASE, delay: 0.3 }} style={{ transformOrigin: "left" }} className="block w-12 h-px bg-gold" />
-              <span className="text-[11px] tracking-[0.32em] text-gold uppercase">Portafolio Personal</span>
+      <AnimatePresence>
+        {menu && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[70] bg-background/95 px-5 pt-28 backdrop-blur-xl sm:hidden">
+            <nav className="flex flex-col">
+              {nav.map(([href, label], i) => (
+                <a key={href} href={href} onClick={() => setMenu(false)} className="border-b border-surface-border py-5 font-serif text-4xl">
+                  <span className="mr-3 text-[10px] font-sans tracking-[0.2em] text-gold">0{i + 1}</span>{label}
+                </a>
+              ))}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <main id="top" className="relative z-[2] mx-auto max-w-6xl px-5 sm:px-8">
+        <section className="relative flex min-h-[88vh] items-center py-20 sm:py-28">
+          <div className="dc-hero-grid absolute inset-0 -z-10 opacity-45" />
+          <div className="absolute -right-64 top-8 -z-10 h-[520px] w-[520px] rounded-full bg-gold/10 blur-[120px]" />
+          <div className="grid w-full gap-14 lg:grid-cols-[1fr_300px] lg:items-end">
+            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+              <div className="mb-9 flex items-center gap-3 text-[10px] uppercase tracking-[0.32em] text-gold"><span className="h-px w-12 bg-gold" />Universo personal / 2026</div>
+              <h1 className="font-serif font-black uppercase leading-[0.82] tracking-[-0.06em]">
+                <span className="block text-[18vw] sm:text-[116px] lg:text-[138px]">DelCaribe</span>
+                <span className="block text-[15vw] text-gold sm:text-[98px] lg:text-[116px]">Colecciona</span>
+                <span className="block text-[18vw] sm:text-[116px] lg:text-[138px]">Mundos.</span>
+              </h1>
+              <p className="mt-10 max-w-xl text-[14px] leading-[1.9] text-muted-foreground">Música, cultura, fotografía, motor, terror y código. Distintos formatos para explorar una misma obsesión: <span className="text-foreground">el detalle y las historias detrás de las cosas.</span></p>
+              <div className="mt-9 flex flex-wrap gap-3"><a href="#proyectos" className="dc-button-primary">Ver proyectos ↘</a><a href="#universo" className="dc-button-secondary">Explorar universo</a></div>
             </motion.div>
-
-            <h1 className="font-serif font-black leading-[0.92] text-[68px] sm:text-[104px] tracking-[-0.045em]">
-              <motion.span variants={fadeUp} className="block text-foreground">Del</motion.span>
-              <motion.span variants={fadeUp} className="block">
-                <motion.span
-                  animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
-                  transition={{ duration: 9, repeat: Infinity, ease: "linear" }}
-                  className="inline-block"
-                  style={{
-                    backgroundImage: "linear-gradient(120deg, var(--gold), var(--gold-soft) 45%, var(--gold) 90%)",
-                    backgroundSize: "200% 100%",
-                    backgroundClip: "text",
-                    WebkitBackgroundClip: "text",
-                    color: "transparent",
-                  }}
-                >
-                  Caribe
-                </motion.span>
-              </motion.span>
-            </h1>
-
-            <motion.p variants={fadeUp} className="mt-12 max-w-md text-[14.5px] leading-[1.85] text-muted-foreground">
-              Coleccionista de mundos. <span className="text-foreground font-medium">Música, anime, literatura, terror, códigos.</span> Encuentro patrones donde los demás ven caos — ya sea en la historia, en una pista, o en un bug de las 3am.
-            </motion.p>
-
-            <motion.div variants={fadeUp} className="mt-12 flex flex-wrap gap-3">
-              <motion.a whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }} transition={{ duration: 0.25, ease: EASE }} href="#sobre" className="px-5 py-2.5 rounded-md bg-gold text-background text-[13px] font-medium shadow-[0_10px_40px_-12px_color-mix(in_oklab,var(--gold)_70%,transparent)] hover:bg-gold-soft transition-colors">
-                Conocerme
-              </motion.a>
-              <motion.a whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }} transition={{ duration: 0.25, ease: EASE }} href="#contacto" className="px-5 py-2.5 rounded-md border border-surface-border text-[13px] font-medium hover:bg-surface hover:border-gold/40 transition-colors">
-                Hablemos
-              </motion.a>
-            </motion.div>
-
-            <motion.div initial={{ opacity: 0 }} animate={loaded ? { opacity: 1 } : {}} transition={{ duration: 0.8, delay: 1.3 }} className="mt-20 flex items-center gap-3 text-[10px] tracking-[0.4em] text-muted-foreground uppercase">
-              <span>Scroll</span>
-              <motion.span animate={{ y: [0, 6, 0] }} transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }} className="block w-px h-6 bg-gradient-to-b from-gold to-transparent" />
-            </motion.div>
-          </motion.div>
-
-          <motion.div aria-hidden style={{ y: glowY }} className="pointer-events-none absolute -top-24 -right-16 w-[520px] h-[520px] opacity-50 blur-3xl">
-            <div className="w-full h-full" style={{ background: "radial-gradient(closest-side, color-mix(in oklab, var(--gold) 22%, transparent), transparent)" }} />
-          </motion.div>
-        </motion.section>
-
-        <hr className="border-surface-border" />
-
-        <section id="universo" className="py-24 scroll-mt-24">
-          <SectionLabel index="01 —">Universo</SectionLabel>
-          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.9, ease: EASE }} className="rounded-2xl border border-surface-border bg-surface/30 p-4 sm:p-6 backdrop-blur-sm">
-         <motion.div
-  variants={stagger}
-  className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"
->
-{interests.map((it) => (
-  <div key={it.title}>
-    {it.tag === "FOTOS" ? (
-      <a href="/fotografia">
-        <InterestCard it={it} />
-    )}
-  </div>
-))}
-</motion.div>
-          </motion.div>
-</section>
-        <section id="sobre" className="py-24 scroll-mt-24">
-          <SectionLabel index="02 —">Sobre mí</SectionLabel>
-          <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.9, ease: EASE }} className="rounded-2xl border border-surface-border bg-surface/30 p-7 sm:p-10">
-            <div className="text-[11px] tracking-[0.32em] text-muted-foreground uppercase mb-6">Quién soy</div>
-            <p className="text-[16px] leading-[1.9] text-muted-foreground max-w-3xl">
-              Soy <span className="text-foreground font-medium">DelCaribe</span> — alguien que vive entre épocas y formatos. No colecciono cosas al azar: cada interés tiene un hilo conector. El terror psicológico y la historia comparten la misma pregunta: <span className="text-foreground">¿por qué los humanos hacemos lo que hacemos?</span> Los autos a escala y el anime tienen la misma respuesta: el detalle importa.
-            </p>
-          </motion.div>
-
-          <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-60px" }} className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <motion.div variants={cardVariant} whileHover={{ y: -3 }} transition={{ duration: 0.3, ease: EASE }} className="rounded-2xl border border-surface-border bg-surface/30 p-7 hover:border-gold/30 transition-colors">
-              <div className="text-[11px] tracking-[0.32em] text-muted-foreground uppercase mb-6">Skills</div>
-              <div className="flex flex-wrap gap-2">
-                {skills.map((s, i) => (
-                  <motion.span key={s} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.45, ease: EASE, delay: i * 0.07 }} whileHover={{ y: -2 }} className="px-3 py-1.5 rounded-md border border-gold/40 text-gold text-[12px] cursor-default hover:bg-gold/5 transition-colors">
-                    {s}
-                  </motion.span>
-                ))}
+            <motion.aside initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="rounded-2xl border border-surface-border bg-surface/40 p-5">
+              <div className="mb-7 flex items-center justify-between"><span className="text-[9px] uppercase tracking-[0.3em] text-gold">Transmisión actual</span><span className="dc-pulse h-2 w-2 rounded-full bg-gold" /></div>
+              <div className="space-y-5 text-[12px]">
+                <p><span className="block text-muted-foreground">Construyendo</span>DCaribeanX</p>
+                <p><span className="block text-muted-foreground">Aprendiendo</span>Frontend & interacción</p>
+                <p><span className="block text-muted-foreground">Documentando</span>Fotografía</p>
               </div>
-            </motion.div>
-            <motion.div variants={cardVariant} whileHover={{ y: -3 }} transition={{ duration: 0.3, ease: EASE }} className="rounded-2xl border border-surface-border bg-surface/30 p-7 hover:border-gold/30 transition-colors">
-              <div className="text-[11px] tracking-[0.32em] text-muted-foreground uppercase mb-6">Actualmente</div>
-              <p className="text-[13.5px] text-muted-foreground leading-[1.9]">
-                Iniciando en programación, construyendo proyectos pequeños y explorando la web.
-              </p>
-            </motion.div>
-          </motion.div>
+            </motion.aside>
+          </div>
         </section>
 
-        <section id="contacto" className="py-24 scroll-mt-24">
-          <SectionLabel index="03 —">Contacto</SectionLabel>
-          <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.9, ease: EASE }} className="relative rounded-2xl border border-surface-border bg-surface/30 p-8 sm:p-12 overflow-hidden">
-            <div aria-hidden className="pointer-events-none absolute -top-32 -right-32 w-[400px] h-[400px] opacity-40 blur-3xl" style={{ background: "radial-gradient(closest-side, color-mix(in oklab, var(--gold) 22%, transparent), transparent)" }} />
-            <h2 className="font-serif text-4xl sm:text-5xl font-bold mb-3 tracking-[-0.025em]">Hablemos</h2>
-            <p className="text-[13.5px] text-muted-foreground mb-8">Siempre abierto a buenas conversaciones.</p>
-            <div className="flex flex-wrap gap-3">
-              {[
-                { label: "✉ EMAIL", href: "mailto:hola@delcaribe.dev" },
-                { label: "↗ TWITTER", href: "#" },
-                { label: "↗ GITHUB", href: "#" },
-              ].map((b, i) => (
-                <motion.a key={b.label} href={b.href} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.55, ease: EASE, delay: i * 0.09 }} whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }} className="px-4 py-2 rounded-md border border-surface-border text-[12px] tracking-[0.2em] hover:bg-surface hover:border-gold/50 hover:text-gold transition-colors">
-                  {b.label}
-                </motion.a>
-              ))}
-            </div>
-          </motion.div>
+        <section id="universo" className="scroll-mt-24 border-t border-surface-border py-24">
+          <SectionLabel n="01 —">Universo</SectionLabel>
+          <div className="mb-10 grid gap-6 lg:grid-cols-2 lg:items-end"><h2 className="font-serif text-4xl font-semibold tracking-[-0.035em] sm:text-5xl">Diez obsesiones.<br />Un mismo archivo.</h2><p className="max-w-xl text-[13px] leading-[1.85] text-muted-foreground lg:justify-self-end">Cada tarjeta abre una pequeña pieza del universo. Son intereses que explican cómo miro, colecciono y construyo.</p></div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            {interests.map((item, i) => (
+              <motion.button key={item.title} onClick={() => setSelected(item)} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.035 }} whileHover={{ y: -5 }} className="group min-h-[210px] rounded-2xl border border-surface-border bg-surface/40 p-5 text-left hover:border-gold/45">
+                <div className="flex items-start justify-between"><span className="font-serif text-4xl text-foreground/20 group-hover:text-gold/55">{item.index}</span><span className="rounded-full border border-surface-border px-2 py-1 text-[8px] tracking-[0.22em] text-gold">{item.tag}</span></div>
+                <div className="mt-10"><h3 className="font-semibold">{item.title}</h3><p className="mt-2 text-[12px] leading-relaxed text-muted-foreground">{item.desc}</p><div className="mt-5 text-[9px] uppercase tracking-[0.22em] text-gold">Entrar ↗</div></div>
+              </motion.button>
+            ))}
+          </div>
+        </section>
+
+        <section id="proyectos" className="scroll-mt-24 border-t border-surface-border py-24">
+          <SectionLabel n="02 —">Selected works</SectionLabel>
+          <h2 className="font-serif text-4xl font-semibold tracking-[-0.035em] sm:text-5xl">Lo que ya existe.</h2>
+          <p className="mt-4 max-w-2xl text-[13px] leading-[1.85] text-muted-foreground">El portafolio crece con proyectos reales. Sin relleno.</p>
+          <div className="mt-10 grid gap-4 md:grid-cols-2">
+            {projects.map((project) => (
+              <motion.a key={project.title} href={project.href} target={project.external ? "_blank" : undefined} rel={project.external ? "noreferrer" : undefined} whileHover={{ y: -5 }} className="group rounded-3xl border border-surface-border bg-surface/35 p-7 hover:border-gold/45 sm:p-8">
+                <div className="mb-14 flex items-start justify-between"><span className="font-serif text-5xl text-foreground/15 group-hover:text-gold/45">{project.n}</span><span className="text-right text-[9px] uppercase tracking-[0.24em] text-muted-foreground">{project.type}</span></div>
+                <h3 className="font-serif text-3xl font-semibold sm:text-4xl">{project.title}</h3><p className="mt-4 text-[13px] leading-[1.8] text-muted-foreground">{project.desc}</p><div className="mt-8 text-[10px] uppercase tracking-[0.26em] text-gold">{project.cta} ↗</div>
+              </motion.a>
+            ))}
+          </div>
+        </section>
+
+        <section id="sobre" className="scroll-mt-24 border-t border-surface-border py-24">
+          <SectionLabel n="03 —">Sobre mí</SectionLabel>
+          <div className="grid gap-5 lg:grid-cols-[1.25fr_.75fr]">
+            <div className="rounded-3xl border border-surface-border bg-surface/30 p-7 sm:p-10"><p className="font-serif text-3xl font-semibold leading-tight sm:text-5xl">No colecciono cosas al azar. <span className="text-gold">Colecciono mundos.</span></p><p className="mt-8 max-w-2xl text-[14px] leading-[1.9] text-muted-foreground">Soy DelCaribe. Me interesan las conexiones entre cultura, diseño, máquinas, imágenes e historias. La programación se volvió otra forma de explorar lo mismo: entender cómo están construidas las cosas y crear las mías.</p></div>
+            <div className="rounded-3xl border border-surface-border bg-surface/30 p-7 sm:p-8"><div className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground">Stack actual</div><div className="mt-6 flex flex-wrap gap-2">{["HTML / CSS", "JavaScript", "Git", "Next.js", "Tailwind", "Framer Motion"].map((skill) => <span key={skill} className="rounded-full border border-gold/30 px-3 py-1.5 text-[11px] text-gold">{skill}</span>)}</div><p className="mt-9 border-t border-surface-border pt-6 text-[12px] leading-relaxed text-muted-foreground">Aprendiendo mediante proyectos pequeños, interfaces y experimentación visual.</p></div>
+          </div>
+        </section>
+
+        <section id="contacto" className="scroll-mt-24 border-t border-surface-border py-24">
+          <SectionLabel n="04 —">Contacto</SectionLabel>
+          <div className="relative overflow-hidden rounded-3xl border border-surface-border bg-surface/35 p-8 sm:p-12"><div className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-gold/10 blur-[90px]" /><div className="relative grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end"><div><div className="mb-5 text-[9px] uppercase tracking-[0.3em] text-gold">¿Algo interesante?</div><h2 className="font-serif text-5xl font-semibold sm:text-7xl">Hablemos.</h2><p className="mt-5 text-[13px] text-muted-foreground">Ideas, código, fotografía o simplemente una buena conversación.</p></div><div className="flex flex-wrap gap-3"><a href="mailto:hola@delcaribe.dev" className="dc-button-secondary">Email ↗</a><a href="https://github.com/DelCaribeX" target="_blank" rel="noreferrer" className="dc-button-primary">GitHub ↗</a></div></div></div>
         </section>
       </main>
 
-      <footer className="border-t border-surface-border mt-8 relative z-[2]">
-        <div className="max-w-5xl mx-auto px-6 sm:px-8 py-7 flex flex-wrap justify-between gap-3 text-[12px] text-muted-foreground">
-          <div>© 2026 <span className="text-foreground">DelCaribe</span>. Todos los derechos reservados.</div>
-          <div className="tracking-wider">Construido con intención BITCH.</div>
-        </div>
-      </footer>
+      <footer className="border-t border-surface-border"><div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-3 px-5 py-7 text-[11px] text-muted-foreground sm:px-8"><span>© 2026 <b className="text-foreground">DelCaribe</b></span><span className="uppercase tracking-[0.16em]">Built with curiosity, code & caffeine.</span></div></footer>
+
+      <AnimatePresence>
+        {selected && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={(e) => e.currentTarget === e.target && setSelected(null)} className="fixed inset-0 z-[95] flex items-end justify-center bg-black/75 p-3 backdrop-blur-md sm:items-center sm:p-6">
+            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 16 }} className="relative w-full max-w-2xl overflow-hidden rounded-[28px] border border-surface-border bg-background p-7 sm:p-10" role="dialog" aria-modal="true">
+              <div className="dc-dialog-grid absolute inset-0 opacity-35" /><div className="relative"><div className="flex items-start justify-between"><div><span className="text-[9px] uppercase tracking-[0.3em] text-gold">Universo {selected.index} / {selected.tag}</span><div className="mt-4 font-serif text-6xl text-foreground/15">{selected.index}</div></div><button onClick={() => setSelected(null)} className="h-10 w-10 rounded-full border border-surface-border text-muted-foreground" aria-label="Cerrar">×</button></div><h2 className="mt-8 font-serif text-4xl font-semibold sm:text-6xl">{selected.title}</h2><p className="mt-6 text-[14px] leading-[1.9] text-muted-foreground">{selected.body}</p><div className="mt-7 flex flex-wrap gap-2">{selected.keywords.map((k) => <span key={k} className="rounded-full border border-surface-border px-3 py-1.5 text-[10px] uppercase tracking-[0.15em] text-muted-foreground">{k}</span>)}</div><div className="mt-9 border-t border-surface-border pt-7">{selected.href ? <a href={selected.href} className="dc-button-primary">Abrir archivo ↗</a> : <span className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Archivo en construcción — este universo seguirá creciendo.</span>}</div></div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
