@@ -24,8 +24,16 @@ function SpotifyMark() {
   );
 }
 
+function formatTime(ms: number) {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
 export default function SpotifyNowPlaying() {
   const [state, setState] = useState<SpotifyState | null>(null);
+  const [liveProgressMs, setLiveProgressMs] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -34,24 +42,40 @@ export default function SpotifyNowPlaying() {
       try {
         const response = await fetch("/api/spotify", { cache: "no-store" });
         const data = (await response.json()) as SpotifyState;
-        if (active) setState(data);
+        if (active) {
+          setState(data);
+          setLiveProgressMs(data.progressMs ?? 0);
+        }
       } catch {
         if (active) setState({ configured: true, isPlaying: false, error: true });
       }
     };
 
     load();
-    const timer = window.setInterval(load, 30000);
+    const timer = window.setInterval(load, 15000);
     return () => {
       active = false;
       window.clearInterval(timer);
     };
   }, []);
 
+  useEffect(() => {
+    if (!state?.isPlaying || !state.durationMs) return;
+
+    const timer = window.setInterval(() => {
+      setLiveProgressMs((current) => Math.min(state.durationMs ?? current, current + 1000));
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [state?.isPlaying, state?.durationMs, state?.title]);
+
   if (!state || !state.configured || state.error || !state.title) return null;
 
-  const percent = state.isPlaying && state.progressMs && state.durationMs
-    ? Math.min(100, Math.max(0, (state.progressMs / state.durationMs) * 100))
+  const durationMs = state.durationMs ?? 0;
+  const displayProgressMs = state.isPlaying ? liveProgressMs : (state.progressMs ?? 0);
+  const hasTimeline = !state.isRecent && durationMs > 0;
+  const percent = hasTimeline
+    ? Math.min(100, Math.max(0, (displayProgressMs / durationMs) * 100))
     : 0;
 
   return (
@@ -72,38 +96,63 @@ export default function SpotifyNowPlaying() {
         )}
       </div>
 
-      <a
-        href={state.url ?? "https://open.spotify.com"}
-        target="_blank"
-        rel="noreferrer"
-        className="group flex gap-4 p-4"
-        aria-label={`Abrir ${state.title} en Spotify`}
-      >
-        {state.image ? (
-          <img
-            src={state.image}
-            alt={`Portada de ${state.album ?? state.title}`}
-            className="h-20 w-20 shrink-0 rounded-md bg-surface object-contain"
-          />
-        ) : (
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-md border border-surface-border bg-surface text-2xl">🎵</div>
-        )}
+      <div className="flex gap-4 p-4">
+        <a
+          href={state.url ?? "https://open.spotify.com"}
+          target="_blank"
+          rel="noreferrer"
+          className="shrink-0"
+          aria-label={`Abrir ${state.title} en Spotify`}
+        >
+          {state.image ? (
+            <img
+              src={state.image}
+              alt={`Portada de ${state.album ?? state.title}`}
+              className="h-20 w-20 rounded-md bg-surface object-contain transition-transform duration-300 hover:scale-[1.03]"
+            />
+          ) : (
+            <div className="flex h-20 w-20 items-center justify-center rounded-md border border-surface-border bg-surface text-2xl">🎵</div>
+          )}
+        </a>
 
         <div className="min-w-0 flex-1 self-center">
-          <div className="truncate text-[15px] font-semibold text-foreground transition-colors group-hover:text-gold-soft">{state.title}</div>
-          <div className="mt-1 truncate text-[12px] text-muted-foreground">{state.artist}</div>
-          {state.album && <div className="mt-1 truncate text-[10px] text-muted-foreground/70">{state.album}</div>}
-          <div className="mt-3 flex items-center gap-2 text-[9px] uppercase tracking-[0.16em] text-[#1DB954]">
-            <SpotifyMark /> Abrir en Spotify ↗
-          </div>
-        </div>
-      </a>
+          <a
+            href={state.url ?? "https://open.spotify.com"}
+            target="_blank"
+            rel="noreferrer"
+            className="group block"
+            aria-label={`Abrir ${state.title} en Spotify`}
+          >
+            <div className="truncate text-[15px] font-semibold text-foreground transition-colors group-hover:text-gold-soft">{state.title}</div>
+            <div className="mt-1 truncate text-[12px] text-muted-foreground">{state.artist}</div>
+            {state.album && <div className="mt-1 truncate text-[10px] text-muted-foreground/70">{state.album}</div>}
+          </a>
 
-      {state.isPlaying && (
-        <div className="h-[2px] bg-surface-border">
-          <div className="h-full bg-gold transition-[width] duration-700" style={{ width: `${percent}%` }} />
+          {hasTimeline && (
+            <div className="mt-3" aria-label={`Progreso ${formatTime(displayProgressMs)} de ${formatTime(durationMs)}`}>
+              <div className="flex items-center justify-between text-[10px] tabular-nums text-muted-foreground/80">
+                <span>{formatTime(displayProgressMs)}</span>
+                <span>{formatTime(durationMs)}</span>
+              </div>
+              <div className="mt-1.5 h-[3px] overflow-hidden rounded-full bg-surface-border">
+                <div
+                  className="h-full rounded-full bg-gold transition-[width] duration-1000 ease-linear"
+                  style={{ width: `${percent}%` }}
+                />
+              </div>
+            </div>
+          )}
+
+          <a
+            href={state.url ?? "https://open.spotify.com"}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-3 flex items-center gap-2 text-[9px] uppercase tracking-[0.16em] text-[#1DB954] transition-opacity hover:opacity-80"
+          >
+            <SpotifyMark /> Abrir en Spotify ↗
+          </a>
         </div>
-      )}
+      </div>
     </aside>
   );
 }
