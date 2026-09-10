@@ -1,6 +1,10 @@
+import { notFound } from "next/navigation";
+
 export const dynamic = "force-dynamic";
 
 export default function SpotifyConnectPage() {
+  if (process.env.SPOTIFY_SETUP_ENABLED !== "true") notFound();
+
   const hasClientId = Boolean(process.env.SPOTIFY_CLIENT_ID);
   const hasClientSecret = Boolean(process.env.SPOTIFY_CLIENT_SECRET);
   const ready = hasClientId && hasClientSecret;
