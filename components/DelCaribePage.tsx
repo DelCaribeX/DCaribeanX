@@ -45,6 +45,13 @@ const projects = [
   },
 ];
 
+const photoPreview = [
+  { src: "/fotografia/teletubby-street.webp", alt: "Escena urbana monocromática", label: "Street Frame" },
+  { src: "/fotografia/jet-maybach.webp", alt: "Jet privado y Maybach al atardecer", label: "Runway Frame" },
+  { src: "/fotografia/teletubby-police.webp", alt: "Escena monocromática entre agentes", label: "Custody Frame" },
+  { src: "/fotografia/teletubby-low-angle.webp", alt: "Retrato monocromático en contrapicado", label: "Low Angle" },
+];
+
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 function SectionLabel({ index, children }: { index: string; children: string }) {
@@ -70,10 +77,8 @@ function InterestCard({ item, onOpen }: { item: Interest; onOpen: () => void }) 
   const onMove = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (reduce || !ref.current) return;
     const rect = ref.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    ref.current.style.setProperty("--mx", `${x}px`);
-    ref.current.style.setProperty("--my", `${y}px`);
+    ref.current.style.setProperty("--mx", `${e.clientX - rect.left}px`);
+    ref.current.style.setProperty("--my", `${e.clientY - rect.top}px`);
   };
 
   return (
@@ -86,7 +91,7 @@ function InterestCard({ item, onOpen }: { item: Interest; onOpen: () => void }) 
       viewport={{ once: true, margin: "-40px" }}
       whileHover={{ y: -4 }}
       transition={{ duration: 0.45, ease: EASE }}
-      className="group relative min-h-[184px] overflow-hidden rounded-lg border border-white/70 bg-[#121214] p-5 text-left transition-colors duration-300 hover:border-gold/70 sm:min-h-[184px]"
+      className="group relative min-h-[184px] overflow-hidden rounded-lg border border-white/70 bg-[#121214] p-5 text-left transition-colors duration-300 hover:border-gold/70"
     >
       <div
         aria-hidden
@@ -124,6 +129,14 @@ export default function DelCaribePage() {
     };
   }, [selected, menuOpen]);
 
+  const navItems = [
+    ["#universo", "Intereses"],
+    ["#proyectos", "Proyectos"],
+    ["#archivo-visual", "Fotografía"],
+    ["#sobre", "Sobre mí"],
+    ["#contacto", "Contacto"],
+  ];
+
   return (
     <div className="dc-grain min-h-screen bg-background font-sans text-foreground antialiased">
       <motion.div
@@ -133,14 +146,9 @@ export default function DelCaribePage() {
 
       <header className="sticky top-0 z-[80] border-b border-surface-border/55 bg-background/75 backdrop-blur-xl">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4 sm:px-8">
-          <a href="#top" className="text-[15px] font-semibold tracking-tight">
-            Del<span className="text-gold">Caribe</span>
-          </a>
-          <nav className="hidden items-center gap-8 text-[13px] text-muted-foreground sm:flex">
-            <a href="#universo" className="dc-nav-link">Intereses</a>
-            <a href="#proyectos" className="dc-nav-link">Proyectos</a>
-            <a href="#sobre" className="dc-nav-link">Sobre mí</a>
-            <a href="#contacto" className="dc-nav-link">Contacto</a>
+          <a href="#top" className="text-[15px] font-semibold tracking-tight">Del<span className="text-gold">Caribe</span></a>
+          <nav className="hidden items-center gap-7 text-[13px] text-muted-foreground sm:flex">
+            {navItems.map(([href, label]) => <a key={href} href={href} className="dc-nav-link">{label}</a>)}
           </nav>
           <button
             type="button"
@@ -161,20 +169,8 @@ export default function DelCaribePage() {
             className="fixed inset-0 z-[70] bg-background/97 px-6 pt-28 backdrop-blur-xl sm:hidden"
           >
             <nav className="flex flex-col">
-              {[
-                ["#universo", "Intereses"],
-                ["#proyectos", "Proyectos"],
-                ["#sobre", "Sobre mí"],
-                ["#contacto", "Contacto"],
-              ].map(([href, label]) => (
-                <a
-                  key={href}
-                  href={href}
-                  onClick={() => setMenuOpen(false)}
-                  className="border-b border-surface-border py-5 font-serif text-4xl"
-                >
-                  {label}
-                </a>
+              {navItems.map(([href, label]) => (
+                <a key={href} href={href} onClick={() => setMenuOpen(false)} className="border-b border-surface-border py-5 font-serif text-4xl">{label}</a>
               ))}
             </nav>
           </motion.div>
@@ -182,47 +178,23 @@ export default function DelCaribePage() {
       </AnimatePresence>
 
       <main id="top" className="relative z-[2] mx-auto max-w-5xl px-6 sm:px-8">
-        <section className="relative min-h-[575px] border-b border-surface-border py-24 sm:min-h-[640px] sm:py-24">
+        <section className="relative min-h-[575px] border-b border-surface-border py-24 sm:min-h-[640px]">
           <div className="absolute -right-20 top-2 -z-10 h-[460px] w-[460px] rounded-full bg-gold/[0.055] blur-[120px]" />
-
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.75, ease: EASE }}
-            className="max-w-[560px]"
-          >
+          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, ease: EASE }} className="max-w-[560px]">
             <div className="mb-12 flex items-center gap-3">
               <span className="block h-px w-12 bg-gold" />
               <span className="text-[11px] uppercase tracking-[0.32em] text-gold">Portafolio Personal</span>
             </div>
-
             <h1 className="font-serif text-[72px] font-black leading-[0.88] tracking-[-0.05em] sm:text-[104px]">
               <span className="block text-foreground">Del</span>
-              <span
-                className="block text-gold"
-                style={{ textShadow: "0 0 38px rgba(201,161,74,.055)" }}
-              >
-                Caribe
-              </span>
+              <span className="block text-gold" style={{ textShadow: "0 0 38px rgba(201,161,74,.055)" }}>Caribe</span>
             </h1>
-
             <p className="mt-12 max-w-md text-[14.5px] leading-[1.85] text-muted-foreground">
               Coleccionista de mundos. <span className="font-semibold text-foreground">Música, anime, literatura, terror, códigos.</span> Encuentro patrones donde los demás ven caos — ya sea en la historia, en una pista, o en un bug de las 3am.
             </p>
-
             <div className="mt-12 flex flex-wrap gap-3">
-              <a
-                href="#sobre"
-                className="rounded-md bg-gold px-5 py-2.5 text-[13px] font-medium text-background transition hover:-translate-y-0.5 hover:bg-gold-soft"
-              >
-                Conocerme
-              </a>
-              <a
-                href="#contacto"
-                className="rounded-md border border-surface-border px-5 py-2.5 text-[13px] font-medium transition hover:-translate-y-0.5 hover:border-gold/50 hover:bg-surface"
-              >
-                Hablemos
-              </a>
+              <a href="#sobre" className="rounded-md bg-gold px-5 py-2.5 text-[13px] font-medium text-background transition hover:-translate-y-0.5 hover:bg-gold-soft">Conocerme</a>
+              <a href="#contacto" className="rounded-md border border-surface-border px-5 py-2.5 text-[13px] font-medium transition hover:-translate-y-0.5 hover:border-gold/50 hover:bg-surface">Hablemos</a>
             </div>
           </motion.div>
         </section>
@@ -231,9 +203,7 @@ export default function DelCaribePage() {
           <SectionLabel index="01 —">Universo</SectionLabel>
           <div className="rounded-2xl border border-surface-border bg-[#0d0d0f] p-4 sm:p-6">
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {interests.map((item) => (
-                <InterestCard key={item.title} item={item} onOpen={() => setSelected(item)} />
-              ))}
+              {interests.map((item) => <InterestCard key={item.title} item={item} onOpen={() => setSelected(item)} />)}
             </div>
           </div>
         </section>
@@ -242,9 +212,7 @@ export default function DelCaribePage() {
           <SectionLabel index="02 —">Proyectos</SectionLabel>
           <div className="mb-10 max-w-2xl">
             <h2 className="font-serif text-4xl font-semibold tracking-[-0.035em] sm:text-5xl">Lo que construyo.</h2>
-            <p className="mt-4 text-[13px] leading-[1.8] text-muted-foreground">
-              Proyectos reales que amplían el universo sin convertir el sitio en un portafolio genérico.
-            </p>
+            <p className="mt-4 text-[13px] leading-[1.8] text-muted-foreground">Proyectos reales que amplían el universo sin convertir el sitio en un portafolio genérico.</p>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             {projects.map((project) => (
@@ -268,30 +236,63 @@ export default function DelCaribePage() {
           </div>
         </section>
 
-        <section id="sobre" className="scroll-mt-24 border-t border-surface-border py-24">
-          <SectionLabel index="03 —">Sobre mí</SectionLabel>
-          <div className="grid gap-6 lg:grid-cols-[1.15fr_.85fr]">
+        <section id="archivo-visual" className="scroll-mt-24 border-t border-surface-border py-24">
+          <SectionLabel index="03 —">Archivo visual</SectionLabel>
+          <div className="mb-10 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
-              <h2 className="font-serif text-4xl font-semibold leading-tight tracking-[-0.035em] sm:text-5xl">
-                No colecciono cosas al azar. <span className="text-gold">Colecciono mundos.</span>
-              </h2>
-              <p className="mt-7 max-w-2xl text-[14px] leading-[1.9] text-muted-foreground">
-                Soy DelCaribe. Me interesan las conexiones entre cultura, música, máquinas, imágenes e historias. La programación es otra forma de explorar lo mismo: entender cómo están construidas las cosas y crear las mías.
-              </p>
+              <h2 className="font-serif text-4xl font-semibold tracking-[-0.035em] sm:text-5xl">Fotografía.</h2>
+              <p className="mt-4 max-w-xl text-[13px] leading-[1.8] text-muted-foreground">Frames extraños, tensión, calle y contraste. Un vistazo al archivo visual antes de entrar a la selección completa.</p>
             </div>
-            <div className="rounded-xl border border-surface-border bg-surface/35 p-7">
-              <div className="text-[10px] uppercase tracking-[0.3em] text-gold">Construyendo con</div>
-              <div className="mt-6 flex flex-wrap gap-2">
-                {["HTML / CSS", "JavaScript", "Git", "Next.js", "Tailwind", "Framer Motion"].map((skill) => (
-                  <span key={skill} className="rounded-md border border-surface-border px-3 py-2 text-[11px] text-muted-foreground">{skill}</span>
+            <a href="/fotografia" className="text-[10px] uppercase tracking-[0.24em] text-gold transition hover:text-gold-soft">Abrir archivo ↗</a>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-12">
+            <a href="/fotografia" className="group relative min-h-[360px] overflow-hidden rounded-2xl border border-surface-border bg-[#0d0d0f] lg:col-span-7 sm:min-h-[440px]">
+              <img src={photoPreview[0].src} alt={photoPreview[0].alt} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.025]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
+              <div className="absolute bottom-0 left-0 p-5">
+                <span className="text-[9px] uppercase tracking-[0.28em] text-gold">Frame 01</span>
+                <div className="mt-1 font-serif text-2xl font-semibold">{photoPreview[0].label}</div>
+              </div>
+            </a>
+
+            <div className="grid gap-4 lg:col-span-5">
+              <a href="/fotografia" className="group relative min-h-[220px] overflow-hidden rounded-2xl border border-surface-border bg-[#0d0d0f]">
+                <img src={photoPreview[1].src} alt={photoPreview[1].alt} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.025]" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                <div className="absolute bottom-0 left-0 p-4 text-[9px] uppercase tracking-[0.24em] text-gold">02 / {photoPreview[1].label}</div>
+              </a>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {photoPreview.slice(2).map((photo, index) => (
+                  <a key={photo.src} href="/fotografia" className="group relative min-h-[180px] overflow-hidden rounded-2xl border border-surface-border bg-[#0d0d0f]">
+                    <img src={photo.src} alt={photo.alt} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" />
+                    <div className="absolute bottom-0 left-0 p-3 text-[8px] uppercase tracking-[0.2em] text-gold">0{index + 3} / {photo.label}</div>
+                  </a>
                 ))}
               </div>
             </div>
           </div>
         </section>
 
+        <section id="sobre" className="scroll-mt-24 border-t border-surface-border py-24">
+          <SectionLabel index="04 —">Sobre mí</SectionLabel>
+          <div className="grid gap-6 lg:grid-cols-[1.15fr_.85fr]">
+            <div>
+              <h2 className="font-serif text-4xl font-semibold leading-tight tracking-[-0.035em] sm:text-5xl">No colecciono cosas al azar. <span className="text-gold">Colecciono mundos.</span></h2>
+              <p className="mt-7 max-w-2xl text-[14px] leading-[1.9] text-muted-foreground">Soy DelCaribe. Me interesan las conexiones entre cultura, música, máquinas, imágenes e historias. La programación es otra forma de explorar lo mismo: entender cómo están construidas las cosas y crear las mías.</p>
+            </div>
+            <div className="rounded-xl border border-surface-border bg-surface/35 p-7">
+              <div className="text-[10px] uppercase tracking-[0.3em] text-gold">Construyendo con</div>
+              <div className="mt-6 flex flex-wrap gap-2">
+                {["HTML / CSS", "JavaScript", "Git", "Next.js", "Tailwind", "Framer Motion"].map((skill) => <span key={skill} className="rounded-md border border-surface-border px-3 py-2 text-[11px] text-muted-foreground">{skill}</span>)}
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section id="contacto" className="scroll-mt-24 border-t border-surface-border py-24">
-          <SectionLabel index="04 —">Contacto</SectionLabel>
+          <SectionLabel index="05 —">Contacto</SectionLabel>
           <div className="rounded-2xl border border-surface-border bg-surface/30 p-8 sm:p-10">
             <h2 className="font-serif text-5xl font-semibold sm:text-6xl">Hablemos.</h2>
             <p className="mt-5 text-[13px] text-muted-foreground">Ideas, código, fotografía, música o simplemente una buena conversación.</p>
@@ -319,29 +320,15 @@ export default function DelCaribePage() {
             onMouseDown={(event) => event.currentTarget === event.target && setSelected(null)}
             className="fixed inset-0 z-[95] flex items-end justify-center bg-black/80 p-3 backdrop-blur-md sm:items-center sm:p-6"
           >
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 12 }}
-              className="w-full max-w-xl rounded-2xl border border-surface-border bg-[#0d0d0f] p-7 sm:p-9"
-              role="dialog"
-              aria-modal="true"
-            >
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} className="w-full max-w-xl rounded-2xl border border-surface-border bg-[#0d0d0f] p-7 sm:p-9" role="dialog" aria-modal="true">
               <div className="flex items-start justify-between gap-4">
-                <div>
-                  <div className="text-3xl">{selected.icon}</div>
-                  <div className="mt-5 text-[10px] uppercase tracking-[0.32em] text-gold">{selected.tag}</div>
-                </div>
+                <div><div className="text-3xl">{selected.icon}</div><div className="mt-5 text-[10px] uppercase tracking-[0.32em] text-gold">{selected.tag}</div></div>
                 <button onClick={() => setSelected(null)} className="h-10 w-10 rounded-full border border-surface-border text-muted-foreground" aria-label="Cerrar">×</button>
               </div>
               <h2 className="mt-7 font-serif text-4xl font-semibold sm:text-5xl">{selected.title}</h2>
               <p className="mt-5 text-[14px] leading-[1.9] text-muted-foreground">{selected.body}</p>
               <div className="mt-8 border-t border-surface-border pt-7">
-                {selected.href ? (
-                  <a href={selected.href} className="rounded-md bg-gold px-5 py-2.5 text-[13px] font-medium text-background transition hover:bg-gold-soft">Abrir archivo ↗</a>
-                ) : (
-                  <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Este universo seguirá creciendo.</span>
-                )}
+                {selected.href ? <a href={selected.href} className="rounded-md bg-gold px-5 py-2.5 text-[13px] font-medium text-background transition hover:bg-gold-soft">Abrir archivo ↗</a> : <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Este universo seguirá creciendo.</span>}
               </div>
             </motion.div>
           </motion.div>
