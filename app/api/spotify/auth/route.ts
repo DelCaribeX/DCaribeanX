@@ -6,6 +6,10 @@ const DEFAULT_REDIRECT_URI = "https://dcaribx.vercel.app/api/spotify/callback";
 const SCOPES = ["user-read-currently-playing", "user-read-recently-played"];
 
 export async function GET(request: NextRequest) {
+  if (process.env.SPOTIFY_SETUP_ENABLED !== "true") {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
   const clientId = process.env.SPOTIFY_CLIENT_ID;
 
   if (!clientId) {

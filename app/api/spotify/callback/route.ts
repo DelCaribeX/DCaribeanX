@@ -15,6 +15,10 @@ function page(title: string, message: string, token?: string) {
 }
 
 export async function GET(request: NextRequest) {
+  if (process.env.SPOTIFY_SETUP_ENABLED !== "true") {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
   const error = request.nextUrl.searchParams.get("error");
   if (error) return page("Autorización cancelada", "Spotify no concedió el acceso. Puedes volver a intentarlo cuando quieras.");
 
